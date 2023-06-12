@@ -6,11 +6,17 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import LeftSideNav from '../Left Side Nav/LeftSideNav';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../../Contexts/AuthProvider/AuthProvider';
-import { Image } from 'react-bootstrap';
+import { Button, Image } from 'react-bootstrap';
 import { FaUser } from 'react-icons/fa';
 
 const Header = () => {
-  const { user } = useContext(AuthContext);
+  const { user, logOut } = useContext(AuthContext);
+
+  const handleLogOut = () => {
+    logOut()
+      .then(() => {})
+      .catch((error) => console.error(error));
+  };
 
   return (
     <Navbar
@@ -43,13 +49,27 @@ const Header = () => {
             </NavDropdown>
           </Nav>
           <Nav>
-            <Nav.Link href='#deets'>{user?.displayName}</Nav.Link>
+            <Nav.Link href='#deets'>
+              {user?.uid ? (
+                <>
+                  <span>{user?.displayName}</span>
+                  <Button variant='light' onClick={handleLogOut}>
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to={'/login'}>Login</Link>
+                  <Link to={'/register'}>Register</Link>
+                </>
+              )}
+            </Nav.Link>
             <Nav.Link eventKey={2} href='#memes'>
               {user?.photoURL ? (
                 <Image
                   style={{ height: '30px' }}
                   roundedCircle
-                  src={user.photoURL}
+                  src={user?.photoURL}
                 ></Image>
               ) : (
                 <FaUser></FaUser>
